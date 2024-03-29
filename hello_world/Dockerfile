@@ -1,14 +1,11 @@
-# Use the AWS Lambda Python 3.10 base image
-FROM public.ecr.aws/lambda/python:3.10
+FROM public.ecr.aws/lambda/python:3.11
 
-# Copy ffmpeg
-COPY ffmpeg /usr/local/bin/ffmpeg
+# Copy function code
+COPY app.py ${LAMBDA_TASK_ROOT}
+COPY requirements.txt  ${LAMBDA_TASK_ROOT}
 
-# Copy your application code
-COPY app.py requirements.txt spectrogram_generation_functions.py ./
+# install dependencies
+RUN pip3 install --user -r requirements.txt
 
-# Install Python dependencies
-RUN python3.10 -m pip install -r requirements.txt -t .
-
-# Command to run the Lambda handler
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "app.lambda_handler" ]

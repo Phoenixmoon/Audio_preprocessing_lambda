@@ -4,13 +4,18 @@ builds docker images (tag and then . to refer to docker image)
 ```bash
 cd hello_world
 docker build --no-cache -t 851633384945.dkr.ecr.us-east-2.amazonaws.com/test_ecr:v4 . 
+# or
+docker build -t 851633384945.dkr.ecr.us-east-1.amazonaws.com/test_ecr:v10 .
 ```
 
 docker push
 ```bash
 aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 851633384945.dkr.ecr.us-east-2.amazonaws.com
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 851633384945.dkr.ecr.us-east-1.amazonaws.com
 docker push 851633384945.dkr.ecr.us-east-2.amazonaws.com/test_ecr:v4
-``` 
+docker push 851633384945.dkr.ecr.us-east-1.amazonaws.com/test_ecr:v10
+```
+
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
