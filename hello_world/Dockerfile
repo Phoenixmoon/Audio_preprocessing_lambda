@@ -1,0 +1,14 @@
+# Use the AWS Lambda Python 3.10 base image
+FROM public.ecr.aws/lambda/python:3.10
+
+# Copy ffmpeg
+COPY ffmpeg /usr/local/bin/ffmpeg
+
+# Copy your application code
+COPY app.py requirements.txt spectrogram_generation_functions.py ./
+
+# Install Python dependencies
+RUN python3.10 -m pip install -r requirements.txt -t .
+
+# Command to run the Lambda handler
+CMD [ "app.lambda_handler" ]
