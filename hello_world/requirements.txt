@@ -3,3 +3,5 @@ librosa
 Pillow
 pydub
 tqdm
+
+boto3
