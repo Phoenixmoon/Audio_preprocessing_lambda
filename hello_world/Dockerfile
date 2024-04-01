@@ -1,5 +1,10 @@
 FROM public.ecr.aws/lambda/python:3.11
 
+WORKDIR ${LAMBDA_TASK_ROOT}
+
+# Copy FFmpeg
+COPY ffmpeg/ /usr/local/bin/
+
 # install dependencies
 COPY requirements.txt  ${LAMBDA_TASK_ROOT}
 RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"

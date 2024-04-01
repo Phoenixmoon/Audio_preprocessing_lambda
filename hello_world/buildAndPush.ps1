@@ -13,5 +13,5 @@ $full_uri = $ecr + $container_name + ":" + $tag
 docker build -t $full_uri -f $docker_file .
 # Login
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ecr
-# Push the image to ECR
+# # Push the image to ECR
 docker push $full_uri
