@@ -1,3 +1,4 @@
+print('Starting import...')
 import json
 import librosa
 import numpy as np
@@ -39,7 +40,7 @@ def lambda_handler(event, context):
     mp3_base64 = querystring.get('mp3')
     # batch_size = int(querystring.get('batch', 16))
 
-    print(f"event: {event}")
+    # print(f"event: {event}")
 
     with TemporaryDirectory() as tmp_dir:
         os.chdir(tmp_dir)
@@ -57,11 +58,11 @@ def lambda_handler(event, context):
         except Exception as e:
             print("Error:", e)
 
-        output_test_dir = Path(tmp_dir.name)
+        output_test_dir = Path(tmp_dir)
 
         output_path = output_test_dir / mp3_file
         output_path = str(output_path)
-        multithreading_sampling(mp3_file, output_path, num_samples=16, y_parameter=250,
+        multithreading_sampling(mp3_file, output_path, num_samples_per_song=16, y_parameter=250,
                                 max_workers=100, sample_duration=5) # or was it 10 seconds??
 
         test_ims = list(output_test_dir.glob('*.png'))
@@ -90,3 +91,9 @@ def lambda_handler(event, context):
                 "Spectrogram_paths": image_paths_in_s3
             }),
         }
+
+
+if __name__ == "__main__":
+    with open('mp3_b64.txt', 'r') as f:
+        b64_mp3 = f.read()
+    lambda_handler({"queryStringParameters": {"mp3": b64_mp3}}, None)
