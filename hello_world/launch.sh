@@ -1,0 +1,1 @@
+docker run -it 851633384945.dkr.ecr.us-east-1.amazonaws.com/musicclassification app.lambda_handler -v /Users/joannazhang/Downloads/:/downloads -e TXT_PATH=/downloads/base64.txt

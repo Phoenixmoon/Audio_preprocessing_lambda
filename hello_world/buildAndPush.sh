@@ -3,9 +3,10 @@
 # Path to dockerfile
 docker_file="Dockerfile"
 # ECR uri
-ecr="851633384945.dkr.ecr.us-east-2.amazonaws.com"
+ecr="851633384945.dkr.ecr.us-east-1.amazonaws.com"
+
 # Name of the repository
-container_name="/test_ecr"
+container_name="/musicclassification"
 # Tag name for the latest version of the image
 tag="latest"
 

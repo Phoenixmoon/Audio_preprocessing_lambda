@@ -63,7 +63,7 @@ def lambda_handler(event, context):
         output_path = output_test_dir / mp3_file
         output_path = str(output_path)
         multithreading_sampling(mp3_file, output_path, num_samples_per_song=16, y_parameter=250,
-                                max_workers=100, sample_duration=5) # or was it 10 seconds??
+                                max_workers=1, sample_duration=5) # or was it 10 seconds??
 
         test_ims = list(output_test_dir.glob('*.png'))
 
@@ -94,6 +94,6 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
-    with open('mp3_b64.txt', 'r') as f:
+    with open(os.getenv("TXT_PATH", '/Users/joannazhang/Downloads/base64.txt'), 'r') as f:
         b64_mp3 = f.read()
     lambda_handler({"queryStringParameters": {"mp3": b64_mp3}}, None)

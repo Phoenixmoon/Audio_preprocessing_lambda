@@ -5,9 +5,14 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 # Copy FFmpeg
 COPY ffmpeg/ /usr/local/bin/
 
+RUN yum install libsndfile -y
+
 # install dependencies
 COPY requirements.txt  ${LAMBDA_TASK_ROOT}
 RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+
+# change permissions
+RUN chmod +777 -R /usr/local/bin
 
 # Copy function code
 COPY app.py ${LAMBDA_TASK_ROOT}
