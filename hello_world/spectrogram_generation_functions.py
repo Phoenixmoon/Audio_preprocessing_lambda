@@ -2,6 +2,7 @@ import numpy as np
 from pydub import AudioSegment
 import random
 import librosa
+import os
 from pathlib import Path
 from scipy.io import wavfile
 from PIL import Image, ImageOps
@@ -44,7 +45,9 @@ def multithreading_sampling(
         array = array[:, 0]
 
     # now, generating the image array
+    print("currently working directory is", os.getcwd())
     D = librosa.stft(array)
+    print("stft success. Now converting amplitude to decibel.")
     img_array = librosa.amplitude_to_db(np.abs(D), ref=np.max) # img height is always 1025
     img_array = img_array[0:y_parameter, :][::-1,] # cutting down array to relevant data and then flipping it
 
