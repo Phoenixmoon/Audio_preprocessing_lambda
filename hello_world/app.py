@@ -41,6 +41,7 @@ def lambda_handler(event, context):
     # batch_size = int(querystring.get('batch', 16))
 
     # print(f"event: {event}")
+    os.system("rm -rf /tmp/*")
 
     with TemporaryDirectory() as tmp_dir:
         os.chdir(tmp_dir)
