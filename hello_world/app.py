@@ -38,9 +38,12 @@ def lambda_handler(event, context):
     # mp3_base64 = querystring.get('mp3')
 
     # for POST
-    body = event.get('body', '{}')
-    payload = json.loads(body)
-    mp3_base64 = payload.get('mp3')
+    body = event.get('body', event)
+    mp3_base64 = body.get('mp3')
+
+    # body = event.get('body', '{}')
+    # payload = json.loads(body)
+    # mp3_base64 = payload.get('mp3')
 
     # batch_size = int(querystring.get('batch', 16))
 
@@ -101,4 +104,4 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     with open(os.getenv("TXT_PATH", '/Users/joannazhang/Downloads/base64.txt'), 'r') as f:
         b64_mp3 = f.read()
-    lambda_handler({"queryStringParameters": {"mp3": b64_mp3}}, None)
+    lambda_handler({"body": {"mp3": b64_mp3}}, None)
