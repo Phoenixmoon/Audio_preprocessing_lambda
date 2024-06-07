@@ -39,6 +39,8 @@ def lambda_handler(event, context):
 
     # for POST
     body = event.get('body', event)
+    print(event)
+    print(body)
     mp3_base64 = body.get('mp3')
 
     # body = event.get('body', '{}')
