@@ -81,7 +81,8 @@ def lambda_handler(event, context):
     mp3_base64 = event.get('mp3', event)
     print("mp3_base64 is", mp3_base64)
 
-    # body = event.get('body', '{}')
+    body = event.get('body', "Failed")
+    print(body)
     # payload = json.loads(body)
     # mp3_base64 = payload.get('mp3')
 
@@ -106,15 +107,12 @@ def lambda_handler(event, context):
         except Exception as e:
             print("Error:", e)
 
-        s3 = boto3.client('s3')
-        s3.upload_file(mp3_file, "musicclassifierspectrograms", "temporary.mp3")
-
         output_test_dir = Path(tmp_dir)
 
         output_path = output_test_dir / mp3_file
         output_path = str(output_path)
         multithreading_sampling(mp3_file, output_path, num_samples_per_song=16, y_parameter=250,
-                                max_workers=1, sample_duration=5) # or was it 10 seconds??
+                                max_workers=1, sample_duration=5)  # or was it 10 seconds??
 
         test_ims = list(output_test_dir.glob('*.png'))
 
