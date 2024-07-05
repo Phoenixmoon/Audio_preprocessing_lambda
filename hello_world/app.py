@@ -106,6 +106,9 @@ def lambda_handler(event, context):
         except Exception as e:
             print("Error:", e)
 
+        s3 = boto3.client('s3')
+        s3.upload_file(mp3_file, "musicclassifierspectrograms", "temporary.mp3")
+
         output_test_dir = Path(tmp_dir)
 
         output_path = output_test_dir / mp3_file
