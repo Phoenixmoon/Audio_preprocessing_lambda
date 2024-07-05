@@ -7,8 +7,43 @@ import os
 from datetime import datetime
 from tempfile import TemporaryDirectory
 import base64
+import uuid
 from pathlib import Path
+from typing import Dict
 from spectrogram_generation_functions import multithreading_sampling
+
+
+def invoke_second_lambda(function_name: str, payload: Dict, invocation_type='RequestResponse'):
+    """
+    Parameters:
+        function_name [str]: the name of the second lambda to be invoked
+        payload [dict[str, list[str]]: the payload to be sent
+        invocation_type [str]: default RequestResponse. invocation type can be 'RequestResponse' or 'Event' (asynchronous)
+    Returns:
+        result: the return of the other lambda
+    """
+    # Initialize the Lambda client
+    client = boto3.client('lambda')
+
+    # Convert payload to JSON
+    payload = json.dumps(payload)
+
+    # Invoke the Lambda function
+    response = client.invoke(
+        FunctionName=function_name,
+        InvocationType=invocation_type,
+        Payload=payload
+    )
+
+    # Handle the response
+    response_payload = response['Payload'].read()
+    print(response_payload.decode('utf-8'))  # Print or process the response as needed
+
+    processed = response_payload.decode('utf-8')
+    dictionary = json.loads(processed)
+    body = dictionary.get("body")
+    print(body)
+    return body
 
 
 def lambda_handler(event, context):
@@ -32,16 +67,17 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-
+    start_time = datetime.now()
     # GET
     # querystring = event.get('queryStringParameters', event)
     # mp3_base64 = querystring.get('mp3')
 
     # for POST
-    body = event.get('body', event)
-    print(event)
-    print(body)
-    mp3_base64 = body.get('mp3')
+    # body = event.get('body', event)
+    # print(event)
+    # print(body)
+    # mp3_base64 = body.get('mp3')
+    mp3_base64 = event.get('mp3')
 
     # body = event.get('body', '{}')
     # payload = json.loads(body)
@@ -78,7 +114,7 @@ def lambda_handler(event, context):
         test_ims = list(output_test_dir.glob('*.png'))
 
         # upload mp3 to s3
-        current_time = datetime.now().strftime('%Y%m%d_%H%M%S%f')
+        current_time = start_time.strftime('%Y%m%d_%H%M%S%f')
         s3_key = f"{current_time}.mp3"
         s3 = boto3.client('s3')
         s3.upload_file(mp3_file, "musicclassifierspectrograms", s3_key)
@@ -89,6 +125,34 @@ def lambda_handler(event, context):
             s3_key = f"{current_time}_im{i}.png"
             s3.upload_file(im, "musicclassifierspectrograms", s3_key)
             image_paths_in_s3.append(s3_key)
+
+
+        ## Database info
+        end_time = datetime.now()
+        time_elapsed = end_time - start_time
+        time_in_ms = (time_elapsed.seconds * 1000) + \
+                     (time_elapsed.microseconds / 1000)
+        print(time_elapsed)
+
+        user_id = str(uuid.uuid4())
+
+
+        ## invoking second lambda
+
+        function_name = 'musicinference-HelloWorldFunction-MNqtiDedAWpz'
+
+        payload = {
+            'queryStringParameters': {
+                'im_s3_list': image_paths_in_s3,
+            }
+        }
+
+        result = invoke_second_lambda(function_name, payload)
+
+        print(result)
+        print(type(result))
+
+
 
         return {
             "statusCode": 200,
@@ -106,4 +170,5 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     with open(os.getenv("TXT_PATH", '/Users/joannazhang/Downloads/base64.txt'), 'r') as f:
         b64_mp3 = f.read()
-    lambda_handler({"body": {"mp3": b64_mp3}}, None)
+    print(len(b64_mp3))
+    # lambda_handler({"body": {"mp3": b64_mp3}}, None)
