@@ -68,6 +68,7 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
     start_time = datetime.now()
+    print("start time is", start_time.strftime('%Y%m%d_%H%M%S%f'))
     # GET
     # querystring = event.get('queryStringParameters', event)
     # mp3_base64 = querystring.get('mp3')
@@ -77,7 +78,8 @@ def lambda_handler(event, context):
     # print(event)
     # print(body)
     # mp3_base64 = body.get('mp3')
-    mp3_base64 = event.get('mp3')
+    mp3_base64 = event.get('mp3', event)
+    print("mp3_base64 is", mp3_base64)
 
     # body = event.get('body', '{}')
     # payload = json.loads(body)
