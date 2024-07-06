@@ -13,39 +13,6 @@ from typing import Dict
 from spectrogram_generation_functions import multithreading_sampling
 
 
-def invoke_second_lambda(function_name: str, payload: Dict, invocation_type='RequestResponse'):
-    """
-    Parameters:
-        function_name [str]: the name of the second lambda to be invoked
-        payload [dict[str, list[str]]: the payload to be sent
-        invocation_type [str]: default RequestResponse. invocation type can be 'RequestResponse' or 'Event' (asynchronous)
-    Returns:
-        result: the return of the other lambda
-    """
-    # Initialize the Lambda client
-    client = boto3.client('lambda')
-
-    # Convert payload to JSON
-    payload = json.dumps(payload)
-
-    # Invoke the Lambda function
-    response = client.invoke(
-        FunctionName=function_name,
-        InvocationType=invocation_type,
-        Payload=payload
-    )
-
-    # Handle the response
-    response_payload = response['Payload'].read()
-    print(response_payload.decode('utf-8'))  # Print or process the response as needed
-
-    processed = response_payload.decode('utf-8')
-    dictionary = json.loads(processed)
-    body = dictionary.get("body")
-    print(body)
-    return body
-
-
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -74,17 +41,7 @@ def lambda_handler(event, context):
     # mp3_base64 = querystring.get('mp3')
 
     # for POST
-    # body = event.get('body', event)
-    # print(event)
-    # print(body)
-    # mp3_base64 = body.get('mp3')
     mp3_base64 = event.get('mp3', event)
-    print("mp3_base64 is", mp3_base64)
-
-    body = event.get('body', "Failed")
-    print(body)
-    # payload = json.loads(body)
-    # mp3_base64 = payload.get('mp3')
 
     # batch_size = int(querystring.get('batch', 16))
 
@@ -140,22 +97,6 @@ def lambda_handler(event, context):
         user_id = str(uuid.uuid4())
 
 
-        ## invoking second lambda
-
-        function_name = 'musicinference-HelloWorldFunction-MNqtiDedAWpz'
-
-        payload = {
-            'queryStringParameters': {
-                'im_s3_list': image_paths_in_s3,
-            }
-        }
-
-        result = invoke_second_lambda(function_name, payload)
-
-        print(result)
-        print(type(result))
-
-
 
         return {
             "statusCode": 200,
@@ -171,7 +112,7 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
-    with open(os.getenv("TXT_PATH", '/Users/joannazhang/Downloads/base64.txt'), 'r') as f:
+    with open(os.getenv("TXT_PATH", '/Users/joannazhang/Downloads/base64_full.txt'), 'r') as f:
         b64_mp3 = f.read()
     print(len(b64_mp3))
-    # lambda_handler({"body": {"mp3": b64_mp3}}, None)
+    lambda_handler({"mp3": b64_mp3}, None)
