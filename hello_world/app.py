@@ -14,25 +14,25 @@ from spectrogram_generation_functions import multithreading_sampling, multithrea
 
 
 
-with open("credentials.toml", 'r') as f:
-    config = toml.load(f)
-
-for key, value in config.items():
-    os.environ[key] = str(value)
-
-uri = os.getenv('uri')
-
-
-client = MongoClient(uri)
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-
-db = client.music_classification
-
-audio_collection = db['preprocessing_job']
+# with open("credentials.toml", 'r') as f:
+#     config = toml.load(f)
+#
+# for key, value in config.items():
+#     os.environ[key] = str(value)
+#
+# uri = os.getenv('uri')
+#
+#
+# client = MongoClient(uri)
+# try:
+#     client.admin.command('ping')
+#     print("Pinged your deployment. You successfully connected to MongoDB!")
+# except Exception as e:
+#     print(e)
+#
+# db = client.music_classification
+#
+# audio_collection = db['preprocessing_job']
 
 
 class PreprocessingDict(TypedDict):
