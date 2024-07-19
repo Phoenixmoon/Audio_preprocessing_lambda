@@ -35,13 +35,13 @@ import json
 # audio_collection = db['preprocessing_job']
 
 
-class PreprocessingDict(TypedDict):
-    time_stamp: str
-    user_id: str
-    output: list[str]
-    audio_length: float  # in sec
-    audio_file_size: float
-    time_taken: float
+# class PreprocessingDict(TypedDict):
+#     time_stamp: str
+#     user_id: str
+#     output: list[str]
+#     audio_length: float  # in sec
+#     audio_file_size: float
+#     time_taken: float
 
 
 def lambda_handler(event, context):
