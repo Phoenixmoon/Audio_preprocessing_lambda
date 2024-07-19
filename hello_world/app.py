@@ -1,16 +1,16 @@
 print('Starting import...')
 import json
-import librosa
-import numpy as np
-import boto3
-import os
-from datetime import datetime
-from tempfile import TemporaryDirectory
-import base64
-import uuid
-from pathlib import Path
-from typing import Dict, TypedDict
-from spectrogram_generation_functions import multithreading_sampling, multithreading_stft_test
+# import librosa
+# import numpy as np
+# import boto3
+# # import os
+# # from datetime import datetime
+# from tempfile import TemporaryDirectory
+# import base64
+# import uuid
+# from pathlib import Path
+# from typing import Dict, TypedDict
+# from spectrogram_generation_functions import multithreading_sampling, multithreading_stft_test
 
 
 
@@ -65,6 +65,18 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",  # Change this to your specific allowed origins
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        },
+        "body": json.dumps({
+            # "Spectrogram_paths": image_paths_in_s3
+            "Mock_return": "STFT Multithreading Worked"
+        }),
+    }
     start_time = datetime.now()
     print("start time is", start_time.strftime('%Y%m%d_%H%M%S%f'))
     # GET
