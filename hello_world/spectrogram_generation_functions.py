@@ -107,3 +107,39 @@ def sample_random_sample_worker(
 
         image.save(save_path)
         return True
+
+
+def multithreading_stft_test(
+        mp3_path,
+        max_workers=4
+):
+    '''
+    Intended to test if STFT can be done in a multithreaded environment.
+    '''
+    sr, array = converter(mp3_path)
+    if len(array.shape) > 1:
+        array = array[:, 0]
+
+    chunk_size = len(array) // max_workers
+
+    # Define a worker function to perform STFT on a chunk
+    def stft_worker(chunk):
+        return librosa.stft(chunk)
+
+    # Split the audio array into chunks
+    chunks = [array[i:i + chunk_size] for i in range(0, len(array), chunk_size)]
+
+    # Use ThreadPoolExecutor to run STFT on each chunk
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(stft_worker, chunk) for chunk in chunks]
+
+        results = []
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Collecting results"):
+            try:
+                result = future.result()
+                results.append(result)
+            except Exception as e:
+                print(e)
+                pass
+        if len(results) != len(futures):
+            raise ValueError("Not all threads finished successfully!")
