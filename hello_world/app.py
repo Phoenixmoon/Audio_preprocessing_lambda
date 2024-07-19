@@ -74,6 +74,10 @@ def lambda_handler(event, context):
     # for POST
     mp3_base64 = event.get('mp3', event)
 
+    #### TEMP
+    num_workers = event.get('num_workers', 4)
+    print(num_workers)
+
     # batch_size = int(querystring.get('batch', 16))
 
     # print(f"event: {event}")
@@ -100,7 +104,7 @@ def lambda_handler(event, context):
         output_path = output_test_dir / mp3_file
         output_path = str(output_path)
 
-        multithreading_stft_test(mp3_file, max_workers=4)
+        multithreading_stft_test(mp3_file, max_workers=num_workers)
 
         # multithreading_sampling(mp3_file, output_path, num_samples_per_song=16, y_parameter=250,
         #                         max_workers=1, sample_duration=5)  # or was it 10 seconds??
