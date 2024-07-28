@@ -17,7 +17,7 @@ RUN chmod +777 -R /usr/local/bin
 # Copy function code
 COPY app.py ${LAMBDA_TASK_ROOT}
 COPY spectrogram_generation_functions.py ${LAMBDA_TASK_ROOT}
-# COPY credentials.toml ${LAMBDA_TASK_ROOT}
+COPY credentials.toml ${LAMBDA_TASK_ROOT}
 
 ENV NUMBA_CACHE_DIR=/tmp
 
