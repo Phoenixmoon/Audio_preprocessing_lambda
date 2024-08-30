@@ -10,12 +10,12 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-def converter(mp3_path):
+def converter(mp3_path: str):
     if '.mp3' in mp3_path:
         mp3_audio = AudioSegment.from_mp3(mp3_path)
         wav_path = Path(mp3_path).with_suffix(".wav")
         wav_file = mp3_audio.export(wav_path, format="wav")
-    elif '.wav' in mp3_path: # just in case some files are wav, not mp3
+    elif '.wav' in mp3_path:  # just in case some files are wav, not mp3
         wav_path = mp3_path
 
     sr, audio = wavfile.read(wav_path)
@@ -24,13 +24,16 @@ def converter(mp3_path):
 
     # scaled_audio = np.int16(audio / np.max(np.abs(audio)) * 32767)
 
+    print(type(sr))
+    print(type(audio))
+
     return sr, audio
 
 
 def multithreading_sampling(
-    mp3_path,
-    output_path,
-    num_samples_per_song,
+    mp3_path: str,
+    output_path: str,
+    num_samples_per_song: int,
     sample_duration=5,
     y_parameter=250,
     max_workers=4,
@@ -52,7 +55,7 @@ def multithreading_sampling(
     img_array = img_array[0:y_parameter, :][::-1,] # cutting down array to relevant data and then flipping it
 
     # scale the array to 0-255
-    img_arr = (img_array / min_db * 255).astype(np.uint8) # uint8 - u avoids negatives
+    img_arr = (img_array / min_db * 255).astype(np.uint8)  # uint8 - u avoids negatives
     # img_arr = (img_array - min_db * 255/abs(min_db)).astype(np.uint8)
 
     duration_seconds = len(array)/sr
@@ -86,7 +89,7 @@ def multithreading_sampling(
                 result = future.result()
                 results.append(result)
             except Exception as e:
-                pass # print(e)
+                pass  # print(e)
         if len(results) != len(futures):
             raise ValueError("Not all threads finished successfully!")
 
@@ -103,7 +106,7 @@ def sample_random_sample_worker(
     if np.mean(img_arr) < 240:  # data validation - white should be silence
         image = Image.fromarray(sample)
 
-        image = image.resize(image_size, resample=Image.BICUBIC) #turn it into a square
+        image = image.resize(image_size, resample=Image.BICUBIC)  # transform into a square
 
         image.save(save_path)
         return True
